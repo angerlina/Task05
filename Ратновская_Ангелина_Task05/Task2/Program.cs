@@ -9,15 +9,16 @@ namespace Task2
     {
         static void Main()
         {
-            StreamReader reader = new StreamReader(@"D:\text.txt");
-
-            string text = reader.ReadToEnd();
-
+            Console.WriteLine("Введите текст:");
+            Console.WriteLine();
+            var text = Console.ReadLine();
+            Console.WriteLine();
+            Console.WriteLine("Сколько раз встречается каждое слово в тексте:");
             string[] arrayStrings =  text.Split(new char[] {' ', '.'});
 
             for (int i = 0; i < arrayStrings.Length; i++)
             {
-                arrayStrings[i] = arrayStrings[i].Trim().ToLower();
+                arrayStrings[i] = arrayStrings[i].Trim(',', ' ').ToLower();
             }
             
             var dictionary = new Dictionary<string, int>();
