@@ -1,5 +1,5 @@
 ﻿using System;
-using  System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections;
 using System.Configuration;
 using System.Linq;
@@ -7,27 +7,41 @@ using System.Linq;
 
 namespace Task3
 {
-   public class DynamicArray : IEnumerable, IEnumerator
+    public class DynamicArray : IEnumerable, IEnumerator
     {
         private Object[] _arr;
         private Object[] _temp;
         private int _size;
-        private int _pointer = -1;   
+        private int _pointer = -1;
 
-        private const int DefaultCapacity = 4;
+        private int DefaultCapacity = 8;
 
-       
+
 
         public DynamicArray()
         {
-            _arr = new object[DefaultCapacity];
+
+            var section = (MyConfigSection)ConfigurationManager.GetSection("MySection");
+
+            if (section != null)
+            {
+                DefaultCapacity = section.DefaultCapacity;
+            }
+
+            initialize(DefaultCapacity);
         }
 
         public DynamicArray(int capacity)
         {
-            _arr = new object[capacity];
+            initialize(capacity);
 
         }
+
+        private void initialize(int capacity)
+        {
+            _arr = new object[capacity];
+        }
+
 
         public DynamicArray(IEnumerable<object> collection)
         {
@@ -35,7 +49,7 @@ namespace Task3
             _arr = new object[enumerable.Count()];
             int i = 0;
             foreach (var element in enumerable)
-            {               
+            {
                 _arr[i] = element;
                 ++i;
             }
@@ -44,42 +58,42 @@ namespace Task3
 
 
 
-       public void Add(object item)
-       {
-           if (_size == Capacity)
-           EnsureCapacity(Capacity*2);
-           _arr[_size] = item;
-           _size++;
-            
-       }
+        public void Add(object item)
+        {
+            if (_size == Capacity)
+                IncreaseCapacity(Capacity * 2);
+            _arr[_size] = item;
+            _size++;
 
-       public bool AddRange(IEnumerable<object> collection )
-       {
-           var enumerable = collection as object[] ?? collection.ToArray();
+        }
 
-           if ((enumerable.Length + _size) > Capacity)
-           EnsureCapacity(enumerable.Length + _size);
+        public bool AddRange(IEnumerable<object> collection)
+        {
+            var enumerable = collection as object[] ?? collection.ToArray();
+
+            if ((enumerable.Length + _size) > Capacity)
+                IncreaseCapacity(enumerable.Length + _size);
             int i = 0;
             foreach (var element in enumerable)
             {
                 _arr[_size + i] = element;
                 ++i;
             }
-           _size += i;
+            _size += i;
 
-           return true;
+            return true;
 
-       }
+        }
 
-       public bool Insert(int index, object item)
-       {
+        public bool Insert(int index, object item)
+        {
             if (index < 0 || index > _size) throw new ArgumentOutOfRangeException();
 
 
-           var oldAmount = Array.FindAll(_arr, item.Equals).Length;
+            var oldAmount = Array.FindAll(_arr, item.Equals).Length;
 
             if (_size == Capacity)
-            EnsureCapacity(Capacity + 1);
+                IncreaseCapacity(Capacity + 1);
             if (index < _size)
             {
                 Array.Copy(_arr, index, _arr, index + 1, _size - index);
@@ -88,22 +102,22 @@ namespace Task3
             _arr[index] = item;
             _size++;
 
-           if (oldAmount + 1 == Array.FindAll(_arr, item.Equals).Length)
-           {
+            if (oldAmount + 1 == Array.FindAll(_arr, item.Equals).Length)
+            {
                 return true;
             }
-            else 
+            else
             {
                 return false;
             }
         }
 
-       public bool Remove(object item)
-       {
+        public bool Remove(object item)
+        {
             _size--;
 
-           if (Array.Exists(_arr, item.Equals))
-           {
+            if (Array.Exists(_arr, item.Equals))
+            {
                 var index = Array.IndexOf(_arr, item);
 
                 if (index < _size)
@@ -115,14 +129,14 @@ namespace Task3
                 return true;
             }
 
-           return false;
-       }
+            return false;
+        }
 
-       public IEnumerator GetEnumerator()
-       {
-           return this;
+        public IEnumerator GetEnumerator()
+        {
+            return this;
 
-       }
+        }
 
         public bool MoveNext()
         {
@@ -149,7 +163,7 @@ namespace Task3
             }
         }
 
-        public object this[int index]   
+        public object this[int index]
         {
             get
             {
@@ -163,7 +177,7 @@ namespace Task3
             }
         }
 
-        private void EnsureCapacity(int number)
+        private void IncreaseCapacity(int number)
         {
             _temp = new object[number];
             _arr.CopyTo(_temp, 0);
@@ -183,7 +197,5 @@ namespace Task3
         }
     }
 
-    
+
 }
-
-

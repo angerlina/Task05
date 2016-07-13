@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections;
-using System.Text;
-using System.Configuration;
-using System.Xml;
+﻿using System.Configuration;
 
 namespace Task3
 {
     public class MyConfigSection : ConfigurationSection
     {
-        
 
-        [ConfigurationProperty("DefaultCapacity")]
+        [ConfigurationProperty("Capacity")]
         public int DefaultCapacity
         {
-            get { return ((int)(base["Capacity"])); }
+            get { return (int)base["Capacity"]; }
+            set { base["Capacity"] = value; }
         }
     }
-}  
+}
